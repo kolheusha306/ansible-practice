@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  vars:
+    - user : ansadmin
+  tasks:
+    - name: check if file already exist
+      command: ls /home/{{ user }}/file3
+      register: file_exists
+      ignore_errors: yes
+
+    - name: create file for user
+      file:
+        path: /home/{{ user }}/file3
+        state: touch
+      when: file_exists is failed
+
+    - name: show msg if file exists
+      debug:
+        msg: file already exists
+      when: file_exists is succeeded
